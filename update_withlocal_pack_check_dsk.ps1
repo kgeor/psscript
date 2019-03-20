@@ -44,8 +44,8 @@ Invoke-Command -ComputerName $pc -ScriptBlock $sb2
 $pc | foreach {
 $remotePath = "\\$_\c$\tmp\"
 Remove-Item $remotePath -Force -Recurse
-Get-WinEvent -ComputerName $_ -FilterHashtable @{LogName='Application';ID='1001'} `
-|Where-Object -Property Message -Match 'chkdsk' | Format-List -Property MachineName, Message}
+Get-WinEvent -ComputerName $_ -FilterHashtable @{LogName='Application';ID='1001'}|
+Where-Object -Property Message -Match 'chkdsk' | Format-List -Property MachineName, Message}
 
 Get-WinEvent -ComputerName $pc -FilterHashtable @{LogName='Application';ID='1001'}
 
@@ -55,6 +55,6 @@ Stop-Computer -ComputerName $pc -Force
 
 
 #Get logs
-$pc | foreach {Get-WinEvent -ComputerName $_ -FilterHashtable @{LogName='Application';ID='1001'}`
-|Where-Object -Property Message -Match 'chkdsk' | Format-List -Property MachineName, Message}
+$pc | foreach {Get-WinEvent -ComputerName $_ -FilterHashtable @{LogName='Application';ID='1001'}|
+Where-Object -Property Message -Match 'chkdsk' | Format-List -Property MachineName, Message}
 
