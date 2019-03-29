@@ -1,8 +1,8 @@
 ﻿$ErrorActionPreference = "SilentlyContinue"
 $ou="OU=StudentsComp,DC=vc,DC=miet,DC=ru"
 $month=Get-Date -Format "MM-yyyy"
-$fpath="C:\Users\kgeor.VC\Desktop\WORK\$month.xlsx"
-$tpath="C:\count_template.xlsx"
+$fpath="E:\Methodic\_VC_\_Complaints\studpass\WORK\$month.xlsx"
+$tpath="C:\Program Files (x86)\scrips\count_template.xlsx"
 $classList=@{
 '05*'='3105'
 '18*'='3118'
@@ -47,6 +47,7 @@ catch {
 $username += $null    
 }   
 
+$username=$username | ? {$_}
 
 $time=Get-Date -Format "dd.MM - HH:mm"
 
@@ -93,13 +94,21 @@ $worksheet.Cells.Item($Row,5)=$tutor.DisplayName
 $final | ForEach-Object {
 $worksheet.Cells.Item($Row,3)=$_.Group
 $worksheet.Cells.Item($Row,4)=$_.Cntr
-$Row++}
+}
+$worksheet.Cells.Item($Row,6)=$pc.count
+$worksheet.Cells.Item($Row,7)=$username.count
+$Row++
 
 # Сохранить, закрыть и освободить приложение
 $Excel.ActiveWorkbook.Save()
 $Workbook.Close()
 $Excel.Quit()
+#[System.GC]::Collect()
+#[System.GC]::WaitForPendingFinalizers()
 #[System.Runtime.Interopservices.Marshal]::ReleaseComObject($worksheet) | Out-Null
-[System.Runtime.Interopservices.Marshal]::FinalReleaseComObject($Excel) | Out-Null
-Remove-Variable -Name Excel 
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($Excel) | Out-Null
 }
+Start-Sleep 3
+[System.GC]::Collect()
+[System.GC]::WaitForPendingFinalizers()
+exit
