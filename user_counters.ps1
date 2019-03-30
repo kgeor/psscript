@@ -32,21 +32,10 @@ $pc.Add((Get-WMIObject Win32_ComputerSystem -ComputerName $_).Name) }}
 
 # Преподский
 $tpc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "OU=Media,OU=StudentsComp,DC=vc,DC=miet,DC=ru").Name
-
-try {
 $tutor=(Get-WMIObject -Class Win32_computerSystem -computer $tpc).username -replace '\w+\\(?<user>\w+)', '${user}' | Get-ADUser -Properties "DisplayName"
-}
-catch {
-$tutor = $null    
-}  
-# Получение текущего пользователя и времени
-try {
-$username = (Get-WMIObject -Class Win32_computerSystem -computer $pc).username -replace '\w+\\(?<user>\w+)', '${user}'
-}
-catch {
-$username += $null    
-}   
 
+# Получение текущего пользователя и времени
+$username = (Get-WMIObject -Class Win32_computerSystem -computer $pc).username -replace '\w+\\(?<user>\w+)', '${user}'
 $username=$username | ? {$_}
 
 $time=Get-Date -Format "dd.MM - HH:mm"
@@ -91,22 +80,21 @@ $Row = $worksheet.UsedRange.Rows.Count + 1
 $worksheet.Cells.Item($Row,1)=$time
 $worksheet.Cells.Item($Row,2)=$pair
 $worksheet.Cells.Item($Row,5)=$tutor.DisplayName
+$worksheet.Cells.Item($Row,6)=$pc.count
+$worksheet.Cells.Item($Row,7)=$username.count
 $final | ForEach-Object {
 $worksheet.Cells.Item($Row,3)=$_.Group
 $worksheet.Cells.Item($Row,4)=$_.Cntr
-}
-$worksheet.Cells.Item($Row,6)=$pc.count
-$worksheet.Cells.Item($Row,7)=$username.count
-$Row++
+$Row++}
 
 # Сохранить, закрыть и освободить приложение
 $Excel.ActiveWorkbook.Save()
 $Workbook.Close()
 $Excel.Quit()
-#[System.GC]::Collect()
-#[System.GC]::WaitForPendingFinalizers()
 #[System.Runtime.Interopservices.Marshal]::ReleaseComObject($worksheet) | Out-Null
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($Excel) | Out-Null
+[System.GC]::Collect()
+[System.GC]::WaitForPendingFinalizers()
 }
 Start-Sleep 3
 [System.GC]::Collect()
