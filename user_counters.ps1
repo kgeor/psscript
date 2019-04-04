@@ -28,7 +28,7 @@ $tutor=''
 # Получение списка компьютеров для текущей аудитории #Получение включенных ПК
 (Get-ADComputer -Filter {Name -like $aud} -SearchBase "OU=StudentsComp,DC=vc,DC=miet,DC=ru").Name |
 ForEach-Object -Process {if(test-connection -count 1 -computerName $_ -TimeToLive 3 -Quiet){
-$pc.Add((Get-WMIObject Win32_ComputerSystem -ComputerName $_).Name) }}
+$pc.Add((Get-WMIObject Win32_ComputerSystem -ComputerName $_).Name) }} | Out-Null
 
 # Преподский
 $tpc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "OU=Media,OU=StudentsComp,DC=vc,DC=miet,DC=ru").Name
@@ -43,11 +43,11 @@ $time=Get-Date -Format "dd.MM - HH:mm"
 
 # Определение группы пользователей
 foreach ($user in $username){
-$group.Add((Get-ADPrincipalGroupMembership $user | wWhere-Object {$_.name -match "-"} | Select-Object -Last 1).name) | Out-Null  #where {$_.name -match "-{1,1}"}).name)
+$group.Add((Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-"} | Select-Object -Last 1).name) | Out-Null  #where {$_.name -match "-{1,1}"}).name)
 }
 
 if(!$group ){$group.Add('Нет')}
-$group | Group-Object | ForEach-Object -Process{$data=New-Object PSObject -Property @{Cntr=''; Group=''}; 
+$group | Group-Object | ForEach-Object -Process{ $data=New-Object PSObject -Property @{Cntr=''; Group=''}; 
 $data.Group=$($_.Name); $data.Cntr=$($_.Count);
 $final.Add($data)} | Out-Null 
 
