@@ -26,7 +26,7 @@ $username =''
 $tutor=''
 
 # Получение списка компьютеров для текущей аудитории #Получение включенных ПК
-$apc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "OU=StudentsComp,DC=vc,DC=miet,DC=ru").Name |
+(Get-ADComputer -Filter {Name -like $aud} -SearchBase "OU=StudentsComp,DC=vc,DC=miet,DC=ru").Name |
 ForEach-Object -Process {if(test-connection -count 1 -computerName $_ -TimeToLive 3 -Quiet){
 $pc.Add((Get-WMIObject Win32_ComputerSystem -ComputerName $_).Name) }}
 
@@ -36,17 +36,18 @@ $tutor=(Get-WMIObject -Class Win32_computerSystem -computer $tpc).username -repl
 
 # Получение текущего пользователя и времени
 $username = (Get-WMIObject -Class Win32_computerSystem -computer $pc).username -replace '\w+\\(?<user>\w+)', '${user}'
-$username=$username | ? {$_}
+# Удаление $null из массива
+$username=$username | Where-Object {$_}
 
 $time=Get-Date -Format "dd.MM - HH:mm"
 
 # Определение группы пользователей
 foreach ($user in $username){
-$group.Add((Get-ADPrincipalGroupMembership $user |where {$_.name -match "-"} | Select-Object -Last 1).name)|Out-Null  #where {$_.name -match "-{1,1}"}).name)
+$group.Add((Get-ADPrincipalGroupMembership $user | wWhere-Object {$_.name -match "-"} | Select-Object -Last 1).name) | Out-Null  #where {$_.name -match "-{1,1}"}).name)
 }
 
 if(!$group ){$group.Add('Нет')}
-$group|Group-Object | ForEach-Object -Process{$data=New-Object PSObject -Property @{Cntr=''; Group=''}; 
+$group | Group-Object | ForEach-Object -Process{$data=New-Object PSObject -Property @{Cntr=''; Group=''}; 
 $data.Group=$($_.Name); $data.Cntr=$($_.Count);
 $final.Add($data)} | Out-Null 
 
@@ -73,7 +74,6 @@ $Excel.ActiveWorkbook.SaveAs($fpath)
 $a=$classList[$aud]
 $worksheet=$Workbook.Worksheets.item($a)
 $worksheet.Activate()
-$LastRowUsed = $worksheet.UsedRange.Rows.Count
 $Row = $worksheet.UsedRange.Rows.Count + 1
 
 # Запись данных в ячейки
