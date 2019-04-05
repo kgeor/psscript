@@ -16,7 +16,7 @@ $start=@([datetime]'09:00',[datetime]'10:40',[datetime]'12:50',[datetime]'14:30'
 $end=@([datetime]'10:30',[datetime]'12:10',[datetime]'14:10',[datetime]'16:00',[datetime]'17:40',[datetime]'19:50',[datetime]'21:30')
 $date=Get-Date 
 
-#$aud="12*"
+#$aud="20*"
 foreach ($aud in $classList.Keys){
 # Обнуляем и инициализируем переменные
 [System.Collections.ArrayList]$pc=@()
@@ -49,7 +49,8 @@ if($gr -ne $null){
     $group.Add($gr) | Out-Null
 }
 else {
-    $group.Add($user)
+if($user -ne $tutor.Name){
+    $group.Add($user)}
 }}
 
 if(!$group ){$group.Add('Нет')}
