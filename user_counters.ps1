@@ -1,5 +1,5 @@
 ﻿$ErrorActionPreference = "SilentlyContinue"
-$ou="OU=StudentsComp,DC=vc,DC=miet,DC=ru"
+#$ou="OU=StudentsComp,DC=vc,DC=miet,DC=ru"
 $month=Get-Date -Format "MM-yyyy"
 $fpath="E:\Methodic\_VC_\_Complaints\studpass\WORK\$month.xlsx"
 $tpath="C:\Program Files (x86)\scrips\count_template.xlsx"
@@ -12,6 +12,7 @@ $classList=@{
 '13*'='4212b'
 '14*'='4214'
 }
+# Границы пар и текущее время для сравнения по интервалам
 $start=@([datetime]'09:00',[datetime]'10:40',[datetime]'12:50',[datetime]'14:30',[datetime]'16:10',[datetime]'18:20',[datetime]'20:00')
 $end=@([datetime]'10:30',[datetime]'12:10',[datetime]'14:10',[datetime]'16:00',[datetime]'17:40',[datetime]'19:50',[datetime]'21:30')
 $date=Get-Date 
@@ -44,17 +45,17 @@ $time=Get-Date -Format "dd.MM - HH:mm"
 # Определение группы пользователей
 foreach ($user in $username){
     $gr=$null
-    $gr=(Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-"} | Select-Object -Last 1).name | Out-Null
-if($gr -ne $null){
+    $gr=(Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-"} | Select-Object -Last 1).name
+if($null -ne $gr){
     $group.Add($gr) | Out-Null
 }
 else {
 if($user -ne $tutor.Name){
-    $group.Add($user)}
+    $group.Add($user) | Out-Null}
 }}
 
 if(!$group ){$group.Add('Нет')}
-$group | Group-Object | ForEach-Object -Process{ $data=New-Object PSObject -Property @{Cntr=''; Group=''}; 
+$group | Group-Object | ForEach-Object -Process{ $data=New-Object PSObject -Property @{Cntr=''; Group=''} | Out-Null; 
 $data.Group=$($_.Name); $data.Cntr=$($_.Count);
 $final.Add($data)} | Out-Null 
 
@@ -62,6 +63,13 @@ for ($i=0;$i -le $start.length;$i++){
 if(($date -ge $start[$i]) -and ($date -le $end[$i])){
     $pair=$i+1
 }}
+
+if($null -ne $tutor){
+$active_users=$username.Count-1
+}
+else{
+$active_users=$username.Count
+}
 
 ### Запись данных в Excel
 # Создаём объект Excel
@@ -78,8 +86,7 @@ $Workbook = $Excel.Workbooks.Open($tpath)
 $Excel.ActiveWorkbook.SaveAs($fpath)
 }
 # Переход на нужный лист и определение первой незаполненной строки
-$a=$classList[$aud]
-$worksheet=$Workbook.Worksheets.item($a)
+$worksheet=$Workbook.Worksheets.item($classList[$aud])
 $worksheet.Activate()
 $Row = $worksheet.UsedRange.Rows.Count + 1
 
@@ -87,8 +94,8 @@ $Row = $worksheet.UsedRange.Rows.Count + 1
 $worksheet.Cells.Item($Row,1)=$time
 $worksheet.Cells.Item($Row,2)=$pair
 $worksheet.Cells.Item($Row,5)=$tutor.DisplayName
-$worksheet.Cells.Item($Row,6)=$pc.count
-$worksheet.Cells.Item($Row,7)=$username.count
+$worksheet.Cells.Item($Row,6)=$pc.Count
+$worksheet.Cells.Item($Row,7)=$active_users
 $final | ForEach-Object {
 $worksheet.Cells.Item($Row,3)=$_.Group
 $worksheet.Cells.Item($Row,4)=$_.Cntr
