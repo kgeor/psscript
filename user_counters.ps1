@@ -22,7 +22,7 @@ foreach ($aud in $classList.Keys){
 [System.Collections.ArrayList]$pc=@()
 [System.Collections.ArrayList]$group=@()
 [System.Collections.ArrayList]$final=@()
-$username =''
+$username=''
 $tutor=''
 
 # Получение списка компьютеров для текущей аудитории #Получение включенных ПК
@@ -43,8 +43,14 @@ $time=Get-Date -Format "dd.MM - HH:mm"
 
 # Определение группы пользователей
 foreach ($user in $username){
-$group.Add((Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-"} | Select-Object -Last 1).name) | Out-Null  #where {$_.name -match "-{1,1}"}).name)
+    $gr=$null
+    $gr=(Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-"} | Select-Object -Last 1).name | Out-Null
+if($gr -ne $null){
+    $group.Add($gr) | Out-Null
 }
+else {
+    $group.Add($user)
+}}
 
 if(!$group ){$group.Add('Нет')}
 $group | Group-Object | ForEach-Object -Process{ $data=New-Object PSObject -Property @{Cntr=''; Group=''}; 
@@ -53,7 +59,7 @@ $final.Add($data)} | Out-Null
 
 for ($i=0;$i -le $start.length;$i++){
 if(($date -ge $start[$i]) -and ($date -le $end[$i])){
-$pair=$i+1
+    $pair=$i+1
 }}
 
 ### Запись данных в Excel
