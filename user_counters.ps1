@@ -1,8 +1,8 @@
 ﻿$ErrorActionPreference = "SilentlyContinue"
 #$ou="OU=StudentsComp,DC=vc,DC=miet,DC=ru"
 $month=Get-Date -Format "MM-yyyy"
-$fpath="E:\Methodic\_VC_\_Complaints\studpass\WORK\$month.xlsx"
-$tpath="C:\Program Files (x86)\scrips\count_template.xlsx"
+$fpath="C:\Users\kgeor.VC\Desktop\WORK\$month.xlsx"
+$tpath="C:\count_template.xlsx"
 $classList=@{
 '05*'='3105'
 '18*'='3118'
@@ -17,7 +17,7 @@ $start=@([datetime]'09:00',[datetime]'10:40',[datetime]'12:50',[datetime]'14:30'
 $end=@([datetime]'10:30',[datetime]'12:10',[datetime]'14:10',[datetime]'16:00',[datetime]'17:40',[datetime]'19:50',[datetime]'21:30')
 $date=Get-Date 
 
-#$aud="20*"
+#$aud="18*"
 foreach ($aud in $classList.Keys){
 # Обнуляем и инициализируем переменные
 [System.Collections.ArrayList]$pc=@()
@@ -55,7 +55,8 @@ if($user -ne $tutor.Name){
 }}
 
 if(!$group ){$group.Add('Нет')}
-$group | Group-Object | ForEach-Object -Process{ $data=New-Object PSObject -Property @{Cntr=''; Group=''} | Out-Null; 
+
+$group | Group-Object | ForEach-Object -Process{$data=New-Object PSObject -Property @{Cntr=''; Group=''}; 
 $data.Group=$($_.Name); $data.Cntr=$($_.Count);
 $final.Add($data)} | Out-Null 
 
