@@ -43,9 +43,9 @@ $username=$username | Where-Object {$_}
 $time=Get-Date -Format "dd.MM - HH:mm"
 
 # Определение группы пользователей
-foreach ($user in $username){
+foreach ($user='r10015818' in $username){
     $gr=$null
-    $gr=(Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-"} | Select-Object -Last 1).name
+    $gr=(Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-[1-4]"} | Select-Object -Last 1).name
 if($null -ne $gr){
     $group.Add($gr) | Out-Null
 }

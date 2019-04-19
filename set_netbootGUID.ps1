@@ -1,20 +1,14 @@
-﻿$pc=''
-$aud=''
-$path=''
-$bcn = Read-Host -Prompt "Введите 'a' для задания аудитории или 'p' для задания имени ПК"
+﻿$bcn = Read-Host -Prompt "Введите 'a' для задания аудитории или 'p' для задания имени ПК"
 if($bcn -eq "a"){
 $aud = Read-Host -Prompt "Введите номер аудитории в формате двух последних цифр"
 $aud+='*'
-$path = Read-Host -Prompt "Укажите полный путь до OU/CN с ПК. Оставьте пустым для поиска по умолчанию в 
-OU=StudentsComp,DC=vc,DC=miet,DC=ru"
-if($path -eq ''){$path = "OU=StudentsComp,DC=vc,DC=miet,DC=ru"}
 }
 if($bcn -eq "p"){
-$pc=(Get-ADComputer (Read-Host -Prompt "Введите имя ПК")).Name
+$pc = Read-Host -Prompt "Введите имя ПК"
 }
 
-if($pc -eq ''){
-$pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase $path).Name
+if($pc -eq $null){
+$pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "DC=vc,DC=miet,DC=ru").Name
 }
 
 $pc | foreach {if(test-connection -count 1 -computerName $_ -TimeToLive 3 -Quiet){

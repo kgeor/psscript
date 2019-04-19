@@ -11,7 +11,7 @@ $pc = Read-Host -Prompt "Введите имя ПК"
 }
 
 if(($pc -eq $null) -and ($aud -ne $null)){
-$pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "OU=StudentsComp,DC=vc,DC=miet,DC=ru").Name
+$pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "DC=vc,DC=miet,DC=ru").Name
 }
 
 $sb = {
