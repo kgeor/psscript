@@ -1,4 +1,5 @@
-﻿$bcn = Read-Host -Prompt "Введите 'a' для задания аудитории или 'p' для задания имени ПК"
+﻿$ErrorActionPreference = "SilentlyContinue"
+$bcn = Read-Host -Prompt "Введите 'a' для задания аудитории или 'p' для задания имени ПК"
 if($bcn -eq "a"){
 $aud = Read-Host -Prompt "Введите номер аудитории в формате двух последних цифр"
 $aud+='*'
@@ -17,7 +18,9 @@ Where-Object {$_.DefaultIPGateway -eq '10.0.0.1'} | Select-Object -Property MACA
 $mac=$s[0].MACAddress.Replace(':', '')
 [guid]$nbGUID = "00000000-0000-0000-0000-$mac"
 Set-ADComputer -Identity $_ -Replace @{'netbootGUID'=$nbGUID}
-write "ПК $_ успешно"
+if($Error.Count -gt 0){$Error}
+else{
+write "ПК $_ успешно"}
 }
 else {write "Ошибка. ПК $_ не доступен"}}
 Read-Host -Prompt "Press any key to close"

@@ -20,7 +20,9 @@ if($Error.Count -gt 0){$Error}}
 
 $pc | foreach {if(test-connection -count 1 -computerName $_ -TimeToLive 3 -Quiet){
 Invoke-Command -ComputerName $_ -ScriptBlock $sb
-write "ПК $_ успешно"
+Write-Host "ПК $_ успешно"
 }
 else {write "Ошибка. ПК $_ не доступен"}}
+$rb = Read-Host -Prompt "Введите 'y' чтобы перезагрузить ПК, иначе оставьте пустым"
+if($rb -eq "y"){Restart-Computer -ComputerName $pc}
 Read-Host -Prompt "Press any key to close"
