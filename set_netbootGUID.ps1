@@ -8,19 +8,20 @@ if($bcn -eq "p"){
 $pc = Read-Host -Prompt "Введите имя ПК"
 }
 
-if($pc -eq $null){
+if($null -eq $pc){
 $pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "DC=vc,DC=miet,DC=ru").Name
 }
 
-$pc | foreach {if(test-connection -count 1 -computerName $_ -TimeToLive 3 -Quiet){
-$s=Get-WmiObject -ClassName Win32_NetworkAdapterConfiguration -ComputerName $_| 
-Where-Object {$_.DefaultIPGateway -eq '10.0.0.1'} | Select-Object -Property MACAddress
+foreach ($comp in $pc){
+    if(test-connection -count 1 -computerName $comp -TimeToLive 3 -Quiet){
+$s=Get-WmiObject -ClassName Win32_NetworkAdapterConfiguration -ComputerName $comp| 
+Where-Object {$comp.DefaultIPGateway -eq '10.0.0.1'} | Select-Object -Property MACAddress
 $mac=$s[0].MACAddress.Replace(':', '')
 [guid]$nbGUID = "00000000-0000-0000-0000-$mac"
-Set-ADComputer -Identity $_ -Replace @{'netbootGUID'=$nbGUID}
+Set-ADComputer -Identity $comp -Replace @{'netbootGUID'=$nbGUID}
 if($Error.Count -gt 0){$Error}
 else{
-write "ПК $_ успешно"}
+write "ПК $comp успешно"}
 }
-else {write "Ошибка. ПК $_ не доступен"}}
+else {write "Ошибка. ПК $comp не доступен"}}
 Read-Host -Prompt "Press any key to close"

@@ -16,6 +16,7 @@ $pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase "DC=vc,DC=miet,DC=ru")
 }
 
 $pc | foreach {if(test-connection -count 1 -computerName $_ -TimeToLive 3 -Quiet){
+$Job = Start-Job -ScriptBlock {
 $ip=(Get-ADComputer -Identity $_ -Properties 'networkAddress').networkAddress
 $sb=[ScriptBlock]::create("
 Rename-NetAdapter -Name $NIC -NewName $new_NIC
@@ -27,5 +28,9 @@ if($Error.Count -gt 0){$Error}
 else{
 write "ПК $_ успешно"}
 }
-else {write "Ошибка. ПК $_ не доступен"}}
+$Job | Wait-Job -Timeout 5
+$Job | Stop-Job
+else {write "Ошибка. ПК $_ не доступен"}
+}
+}
 Read-Host -Prompt "Press any key to close"
