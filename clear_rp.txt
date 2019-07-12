@@ -1,0 +1,2 @@
+Get-ADUser -SearchBase "OU=MIET,DC=TCS,DC=MIET,DC=RU" -Filter * -Properties ProfilePath |
+Set-ADUser -Clear ProfilePath
