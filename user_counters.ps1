@@ -37,13 +37,13 @@ $tutor=(Get-WMIObject -Class Win32_computerSystem -computer $tpc).username -repl
 
 # Получение текущего пользователя и времени
 $username = (Get-WMIObject -Class Win32_computerSystem -computer $pc).username -replace '\w+\\(?<user>\w+)', '${user}'
-# Удаление $null из массива
+# Удаление $null значений из массива
 $username=$username | Where-Object {$_}
 
 $time=Get-Date -Format "dd.MM - HH:mm"
 
 # Определение группы пользователей
-foreach ($user='r10015818' in $username){
+foreach ($user in $username){
     $gr=$null
     $gr=(Get-ADPrincipalGroupMembership $user | Where-Object {$_.name -match "-[1-4]"} | Select-Object -Last 1).name
 if($null -ne $gr){

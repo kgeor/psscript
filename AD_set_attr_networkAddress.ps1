@@ -2,13 +2,16 @@
 $brk=0
 $base="DC=vc,DC=miet,DC=ru"
 Function set_net {
-$bcn = Read-Host -Prompt "Введите 'a' для задания аудитории или 'p' для задания имени ПК"
+$basebcn = Read-Host -Prompt "Current search base: $base.`nEnter '1' to change this, press enter to continue with default"
+if($basebcn -eq "1"){
+$base = Read-Host -Prompt "Enter the new search base in LDAP format"}
+$bcn = Read-Host -Prompt "Enter the 'a' for work with all PC's class or the 'p' for one certain PC"
 if($bcn -eq "a"){
-$aud = Read-Host -Prompt "Введите номер аудитории в формате двух последних цифр"
+$aud = Read-Host -Prompt "Enter common part of PC's names for search by this mask"
 $aud+='*'
 }
 if($bcn -eq "p"){
-$pc = Read-Host -Prompt "Введите имя ПК"
+$pc = Read-Host -Prompt "Enter the PC name"
 }
 
 if($null -eq $pc){

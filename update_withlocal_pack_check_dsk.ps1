@@ -11,7 +11,7 @@ Get-WMIObject Win32_ComputerSystem | Select-Object -ExpandProperty name;
 $null=cmd.exe /c "echo y|chkdsk %systemdrive% /f /r";
 if($Error.Count -gt 0){$Error}}
 
-Invoke-Command -ComputerName $pc -ScriptBlock $sb
+Invoke-Command -ComputerName $pc -ScriptBlock $sb -AsJob
 
 #Check PS version
 $test={$PSVersionTable.PSVersion
@@ -38,7 +38,7 @@ Start-Process -FilePath 'wusa.exe' -ArgumentList "C:\tmp\KB3191566-x64.msu /extr
 Start-Sleep -Seconds 5;
 Start-Process -FilePath 'dism.exe' -ArgumentList "/online /add-package /PackagePath:C:\tmp\WSUSSCAN.cab /PackagePath:C:\tmp\Windows6.1-KB2809215-x64.cab /PackagePath:C:\tmp\Windows6.1-KB2872035-x64.cab /PackagePath:C:\tmp\Windows6.1-KB2872047-x64.cab /PackagePath:C:\tmp\Windows6.1-KB3033929-x64.cab /PackagePath:C:\tmp\Windows6.1-KB3191566-x64.cab /IgnoreCheck /quiet" -Wait -PassThru;
 }
-Invoke-Command -ComputerName $pc -ScriptBlock $sb2
+Invoke-Command -ComputerName $pc -ScriptBlock $sb2 -AsJob
 
 #Remove copying files and get events or chkdsk, check PS Version
 $pc | foreach {
