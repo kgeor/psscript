@@ -2,12 +2,12 @@
 $brk=0
 $base="DC=vc,DC=miet,DC=ru"
 Function set_net {
-$basebcn = Read-Host -Prompt "Current search base: $base.`nEnter '1' to change this, press enter to continue with default"
+$basebcn = Read-Host -Prompt "Current search base: $base.`nPress enter to continue with this or Enter '1' to change search base"
 if($basebcn -eq "1"){
 $base = Read-Host -Prompt "Enter the new search base in LDAP format"}
-$bcn = Read-Host -Prompt "Enter the 'a' for work with all PC's class or the 'p' for one certain PC"
+$bcn = Read-Host -Prompt "EEnter the 'a' for work with whole class or the 'p' for one certain PC"
 if($bcn -eq "a"){
-$aud = Read-Host -Prompt "Enter common part of PC's names for search by this mask"
+$aud = Read-Host -Prompt "Enter common part of PC's names (two last digits in class number)"
 $aud+='*'
 }
 if($bcn -eq "p"){
