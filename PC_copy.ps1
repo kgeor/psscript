@@ -1,7 +1,7 @@
-﻿#$ErrorActionPreference = "SilentlyContinue"
+﻿
 $brk=0
 $base="DC=vc,DC=miet,DC=ru"
-Function set_bootid {
+Function cp_net {
 $basebcn = Read-Host -Prompt "Current search base: $base.`nPress enter to continue with this or Enter '1' to change search base"
 if($basebcn -eq "1"){
 $base = Read-Host -Prompt "Enter the new search base in LDAP format"}
@@ -9,24 +9,27 @@ $bcn = Read-Host -Prompt "Enter the 'a' for work with whole class or the 'p' for
 if($bcn -eq "a"){
 $aud = Read-Host -Prompt "Enter common part of PC's names (two last digits in class number)"
 $aud+='*'
-$pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase $base).Name
 }
 if($bcn -eq "p"){
 $pc = Read-Host -Prompt "Enter the PC name"
 }
+if($null -eq $pc){
+$pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase $base).Name
+}
 
+$spath=Read-Host -Prompt "Enter the source path"
+$dpath=Read-Host -Prompt "Enter the destination path ( path on remote PC: C$\Windows\System32)"
+#\\vc.miet.ru\space\Install\Images\Disk_D_4k\KFN
 foreach ($comp in $pc){
-$s=Get-WmiObject -ClassName Win32_NetworkAdapterConfiguration -ComputerName $comp| Where-Object {$_.DefaultIPGateway -eq '10.0.0.1'} | Select-Object -Property MACAddress
-$mac=$s[0].MACAddress.Replace(':', '')
-[guid]$nbGUID = "00000000-0000-0000-0000-$mac"
-Set-ADComputer -Identity $comp -Replace @{'netbootGUID'=$nbGUID}
-if($Error.Count -gt 0){ Write-Host $Error}
+Copy-Item -Path "$spath" -Destination "\\$comp\$dpath" -Recurse -Force
+if($Error.Count -gt 0){ 
+Write-Host $Error}
 else{
 Write-Host "ПК $comp успешно"}
 }}
 
 while ($brk -eq 0) {
-$output=set_bootid
+$output=cp_net
 write ($output)
-$brk=Read-Host -Prompt "Press 0 to continue, any other to close"
+$brk=Read-Host -Prompt "Press 0 to repeat, any other to close"
 }

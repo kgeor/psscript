@@ -5,7 +5,7 @@ Function set_net {
 $basebcn = Read-Host -Prompt "Current search base: $base.`nPress enter to continue with this or Enter '1' to change search base"
 if($basebcn -eq "1"){
 $base = Read-Host -Prompt "Enter the new search base in LDAP format"}
-$bcn = Read-Host -Prompt "EEnter the 'a' for work with whole class or the 'p' for one certain PC"
+$bcn = Read-Host -Prompt "Enter the 'a' for work with whole class or the 'p' for one certain PC"
 if($bcn -eq "a"){
 $aud = Read-Host -Prompt "Enter common part of PC's names (two last digits in class number)"
 $aud+='*'
@@ -21,9 +21,9 @@ $pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase $base).Name
 foreach ($comp in $pc){
 $ip=[System.Net.DNS]::GetHostAddresses($comp).IPAddressToString
 Set-ADComputer -Identity $comp -Replace @{'networkAddress'=$ip}
-if($Error.Count -gt 0){ Return $Error}
+if($Error.Count -gt 0){ Write-Host $Error}
 else{
-Return "ПК $comp успешно"}
+Write-Host "ПК $comp успешно"}
 }}
 
 while ($brk -eq 0) {
