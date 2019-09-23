@@ -10,7 +10,7 @@ Write-Host "Данный скрипт выполняет проверку дос
 Function pi {
 $basebcn = Read-Host -Prompt "Текущая база поиска: $base.`nНажмите Enter, чтобы продолжить работу с текущей базой или введите '1' для смены"
 if($basebcn -eq "1"){
-$base = Read-Host -Prompt ""}
+$base = Read-Host -Prompt "Укажите новую базу поиска в формате LDAP"}
 $bcn = Read-Host -Prompt "Введите '1' для работы с целым классом или '2' для работы с одним ПК"
 if($bcn -eq "1"){
 $aud = Read-Host -Prompt "Введите общую часть имен ПК класса (05,20,12)"
@@ -27,9 +27,9 @@ $pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase $base).Name
 foreach ($comp in $pc){
  
 if(Test-Connection -ComputerName $comp -Count 1 -Quiet){ 
-Write-Host "ПК $comp онлайн"}
+Write-Host "ПК $comp онлайн" -ForegroundColor Green}
 else{
-Write-Host "ПК $comp недоступен"}
+Write-Host "ПК $comp недоступен" -ForegroundColor Red}
 }}
 
 while ($brk -eq 0) {

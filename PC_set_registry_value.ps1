@@ -20,12 +20,15 @@ if($pc -eq $null){
 $pc=(Get-ADComputer -Filter {Name -like $aud} -SearchBase $base).Name
 }
 Write-Host "`nplease wait, we collecting results"
-
+$pth="HKCU:\Software\Unique IC's\"
 foreach ($comp in $pc){
-Invoke-Command -ComputerName $comp -ScriptBlock {Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power\" -Name HiberbootEnabled -Value 0} 
+
+Invoke-Command -ComputerName $comp -ArgumentList $pth -ScriptBlock {if(Test-Path -Path $args[0]){Remove-Item -Path $args[0] -Recurse}}
+
 if($Error.Count -gt 0){ Write-Host $Error}
 else{
 Write-Host "ПК $comp успешно"}
+
 }
 }
 
