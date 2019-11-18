@@ -12,8 +12,7 @@ Write-Host "Данный скрипт заполняет атрибут networkA
 Function set_net {
 $basebcn = Read-Host -Prompt "Текущая база поиска: $base.`nНажмите Enter, чтобы продолжить работу с текущей базой или введите '1' для смены"
 if($basebcn -eq "1"){
-$base = Read-Host -Prompt "Укажите новую базу поиска в формате LDAP"
-}
+$base = Read-Host -Prompt "Укажите новую базу поиска в формате LDAP"}
 $bcn = Read-Host -Prompt "Введите '1' для работы с целым классом или '2' для работы с одним ПК"
 if($bcn -eq "1"){
 $aud = Read-Host -Prompt "Введите общую часть имен ПК класса (05,20,12)"

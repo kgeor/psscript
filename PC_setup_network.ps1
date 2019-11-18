@@ -49,6 +49,7 @@ Write-Host "ПК $comp недоступен"-ForegroundColor Red }
 Write-Host "`nподождите, идет сбор результатов"
 Start-Sleep -Seconds 20
 foreach ($comp in $pc){Get-Job -Name $comp}
+}
 while ($brk -eq 0) {
 $output=setup_net
 write ($output)
